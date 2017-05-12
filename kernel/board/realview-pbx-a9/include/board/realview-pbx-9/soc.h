@@ -1,0 +1,9 @@
+#ifndef __BOARD_SOC_H
+#define __BOARD_SOC_H
+
+#define UART0_BASE (0x10009000)
+#define UART1_BASE (0x1000A000)
+#define UART2_BASE (0x1000B000)
+#define UART3_BASE (0x1000C000)
+
+#endif // __BOARD_SOC_H
