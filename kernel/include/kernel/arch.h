@@ -17,6 +17,14 @@
 #ifndef __KERNEL_ARCH_H
 #define __KERNEL_ARCH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void arch_init();
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif // __KERNEL_ARCH_H

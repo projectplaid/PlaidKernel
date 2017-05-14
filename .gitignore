@@ -35,3 +35,4 @@ build/
 
 .gdb_history
 plaid.kernel
+docs/

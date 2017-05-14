@@ -4,7 +4,8 @@ CC:=arm-eabi-gcc
 CXX:=arm-eabi-g++
 
 CFLAGS?=-O0 -ggdb
-CXXFLAGS?=
+CPPFLAGS?=
+CXXFLAGS?=-fno-exceptions -fno-rtti
 LDFLAGS?=
 LIBS?=
  
@@ -15,9 +16,10 @@ BOOTDIR?=$(EXEC_PREFIX)/boot
 INCLUDEDIR?=$(PREFIX)/include
  
 CFLAGS:=$(CFLAGS) -ffreestanding -Wall -Wextra
-CXXFLAGS:=$(CXXFLAGS) -D__is_kernel -Iinclude
+CPPFLAGS:=$(CPPFLAGS) -D__is_kernel -Iinclude
+CXXFLAGS:=$(CXXFLAGS)
 LDFLAGS:=$(LDFLAGS) -nostdlib -Wl,--gc-sections -ggdb
-LIBS:=$(LIBS) -lc -lnosys -lgcc 
+LIBS:=$(LIBS) -lstdc++ -lc -lnosys -lgcc 
  
 ARCHDIR=arch/$(HOSTARCH)
 BOARDDIR=board/$(BOARD)
@@ -28,6 +30,7 @@ include $(BOARDDIR)/make.config
 $(foreach driver,$(BOARD_DRIVERS),$(eval include drivers/$(driver)/make.config))
 
 CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS) $(BOARD_CFLAGS) $(DRIVER_CFLAGS)
+CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS) $(BOARD_CPPFLAGS) $(DRIVER_CPPFLAGS)
 CXXFLAGS:=$(CXXFLAGS) $(KERNEL_ARCH_CXXFLAGS) $(BOARD_CXXFLAGS) $(DRIVER_CXXFLAGS)
 LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS) $(BOARD_LDFLAGS) $(DRIVER_LDFLAGS)
 LIBS:=$(KERNEL_ARCH_LIBS) $(BOARD_LIBS) $(DRIVER_LIBS) $(LIBS)
@@ -55,7 +58,7 @@ $(ARCHDIR)/crtn.o \
 $(LIBS) \
  
 .PHONY: all clean install install-headers install-kernel
-.SUFFIXES: .o .c .S .ld
+.SUFFIXES: .o .c .cpp .S .ld
  
 all: plaid.kernel
  
@@ -65,12 +68,15 @@ plaid.kernel: $(OBJS) $(BOARDDIR)/linker.ld
  
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
+
+.cpp.o:
+	$(CXX) -MD -c $< -o $@ -std=gnu++14 $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS)
  
 .c.o:
-	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CXXFLAGS)
+	$(CC) -MD -c $< -o $@ -std=gnu11 $(CFLAGS) $(CPPFLAGS)
  
 .S.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CXXFLAGS)
+	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
  
 clean:
 	rm -f plaid.kernel

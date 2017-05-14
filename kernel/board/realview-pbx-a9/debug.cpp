@@ -29,15 +29,18 @@ int _read(int fd, const void *buf, int count) {
     int written = 0;
     (void)fd;
 
+    unsigned char *charbuf =
+        const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(buf));
+
     for (; count > 0; --count) {
         written++;
-        *(uint8_t *)buf = (unsigned char)kgetc();
+        *charbuf = kgetc();
 
-        if (*(uint8_t *)buf == 0x0Du) {
-            *(uint8_t *)buf = '\n';
+        if (*charbuf == 0x0Du) {
+            *charbuf = '\n';
             break;
         }
-        (uint8_t *)buf++;
+        charbuf++;
     }
 
     return written;
@@ -47,9 +50,12 @@ int _write(int fd, const void *buf, int count) {
     int written = 0;
     (void)fd;
 
+    unsigned char *charbuf =
+        const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(buf));
+
     for (; count > 0; --count) {
-        kputc((char)*(uint8_t *)buf);
-        (uint8_t *)buf++;
+        kputc(*charbuf);
+        charbuf++;
         written++;
     }
 

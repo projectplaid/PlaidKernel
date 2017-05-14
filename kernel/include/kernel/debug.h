@@ -17,8 +17,16 @@
 #ifndef __DEBUG_H
 #define __DEBUG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void kputs(const char *str);
 extern void kputc(char c);
 extern char kgetc(void);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif // __DEBUG_H

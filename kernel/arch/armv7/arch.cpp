@@ -19,9 +19,9 @@
 #include "armv7/cpu.h"
 #include "kernel/arch.h"
 
-extern void CP15VectorBaseAddrSet(unsigned int addr);
-extern void _Reset();
-extern void SVC_Handler();
+extern "C" void CP15VectorBaseAddrSet(unsigned int addr);
+extern "C" void _Reset();
+extern "C" void SVC_Handler();
 
 void UndefInstHandler() {
     for (;;) {
