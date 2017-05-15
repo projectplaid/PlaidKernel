@@ -27,15 +27,13 @@ extern "C" void __libc_init_array();
 
 extern "C" void _init() {}
 
-extern "C" void kernel_init(void) {
+extern "C" void kernel_main() {
     arch_init();
 
     board_init();
 
     __libc_init_array();
-}
 
-extern "C" void kernel_main() {
     kputs("Plaid kernel startup\r\n");
 
     char *str;

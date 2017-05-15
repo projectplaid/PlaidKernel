@@ -1,30 +1,33 @@
+
 @
 @ Define the stack sizes for different modes. The user/system mode will use
 @ the rest of the total stack size
 @
-    .equ  UND_STACK_SIZE, 0x8
-    .equ  ABT_STACK_SIZE, 0x8
-    .equ  FIQ_STACK_SIZE, 0x8
-    .equ  IRQ_STACK_SIZE, 0x1000
-    .equ  SVC_STACK_SIZE, 0x8
+.equ UND_STACK_SIZE, 0x8
+.equ ABT_STACK_SIZE, 0x8
+.equ FIQ_STACK_SIZE, 0x8
+.equ IRQ_STACK_SIZE, 0x1000
+.equ SVC_STACK_SIZE, 0x8
 
 @
 @ to set the mode bits in CPSR for different modes
 @
-    .equ  MODE_USR, 0x10
-    .equ  MODE_FIQ, 0x11
-    .equ  MODE_IRQ, 0x12
-    .equ  MODE_SVC, 0x13
-    .equ  MODE_ABT, 0x17
-    .equ  MODE_UND, 0x1B
-    .equ  MODE_SYS, 0x1F
+.equ MODE_USR, 0x10
+.equ MODE_FIQ, 0x11
+.equ MODE_IRQ, 0x12
+.equ MODE_SVC, 0x13
+.equ MODE_ABT, 0x17
+.equ MODE_UND, 0x1B
+.equ MODE_SYS, 0x1F
 
-    .equ  I_F_BIT,  0xC0
+.equ I_BIT, 0x80
+.equ I_F_BIT, 0xC0
 
-    .equ MASK_SVC_NUM, 0xFF000000
+.equ MASK_SVC_NUM, 0xFF000000
 
-    .text
-    .code 32
+.text
+.arm
+.code 32
 
 .global _Reset
 _Reset:
@@ -96,20 +99,12 @@ Loop:
     CMP   r0, r1
     BLE   Loop                            @ Clear till BSS end
 
-@ jump into the C 'main' function
-    ldr   r10, =kernel_init                @ Get the address of main
-    mov   lr, pc                           @ Dummy return
-    bx    r10                              @ Branch to main
-
-@ jump into the C 'main' function
-    ldr   r10, =kernel_main                @ Get the address of main
-    mov   lr, pc                           @ Dummy return
-    bx    r10                              @ Branch to main
+    bl kernel_main
 
 ExitLoop:
     B .
 
-    .globl SVC_Handler
+.globl SVC_Handler
 SVC_Handler:
     STMFD    r13!, {r0-r1, r14}       @ Save context in SVC stack
     SUB      r13, r13, #0x4           @ Adjust the stack pointer
@@ -122,15 +117,15 @@ SVC_Handler:
     ADD      r13, r13, #0x4           @ Adjust the stack pointer
     LDMFD    r13!, {r0-r1, pc}^       @ Restore registers from IRQ stack
 
-    .globl CP15VectorBaseAddrSet
+.globl CP15VectorBaseAddrSet
 CP15VectorBaseAddrSet:
     MCR     p15, #0, r0, c12, c0, #0
     DSB
     BX      lr
 
-    .section .isr_vector
-    .align 4
-    .globl  __isr_vector
+.section .isr_vector
+.align 4
+.globl  __isr_vector
 __isr_vector:
     LDR   pc, [pc,#24]       @ 0x00 Reset
     LDR   pc, [pc,#-8]       @ 0x04 Undefined Instruction
@@ -148,18 +143,9 @@ __isr_vector:
     .long  0
     .long  0
     .long  0
-
-    @ b . @ _Reset
-    @ b . @ 0
-    @ b . @ SVC_Handler
-    @ b . @ 0
-    @ b . @ 0
-    @ b . @ 0
-    @ b . @ 0
-    @ b . @ 0
    
 @
 @ End of the file
 @
-    .end
+.end
     

@@ -15,7 +15,7 @@
  */
 
 #include "kernel/board.h"
-#include "board/realview-pbx-9/soc.h"
+#include "board/realview-pbx-a9/soc.h"
 #include "drivers/pl011/uart.h"
 
 void board_init() { uart_init(UART0_BASE); }

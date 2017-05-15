@@ -17,11 +17,14 @@
 #include <stdint.h>
 
 #include "armv7/cpu.h"
+#include "armv7/interrupt.h"
 #include "kernel/arch.h"
 
 extern "C" void CP15VectorBaseAddrSet(unsigned int addr);
 extern "C" void _Reset();
 extern "C" void SVC_Handler();
+extern "C" void IRQHandler();
+extern "C" void FIQHandler();
 
 void UndefInstHandler() {
     for (;;) {
@@ -32,10 +35,6 @@ void AbortHandler() {
     for (;;) {
     }
 }
-
-void IRQHandler() {}
-
-void FIQHandler() {}
 
 static unsigned int const vecTbl[14] = {
     0xE59FF018, /* Opcode for loading PC with the contents of [PC + 0x18] */
@@ -72,5 +71,5 @@ void arch_init() {
 
     cpu_switch_to_privileged_mode();
 
-    // interrupt_init();
+    interrupt_init();
 }
