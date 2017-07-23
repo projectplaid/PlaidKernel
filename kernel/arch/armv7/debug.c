@@ -15,22 +15,21 @@
  */
 
 #include "kernel/debug.h"
-#include "board/realview-pbx-a9/soc.h"
+#include "realview-pbx-a9/soc.h"
 #include "drivers/pl011/uart.h"
 #include <stdint.h>
 
-extern "C" void kputs(const char *str) { uart_puts(UART0_BASE, str); }
+void kputs(const char *str) { uart_puts(UART0_BASE, str); }
 
-extern "C" void kputc(char c) { uart_putc(UART0_BASE, c); }
+void kputc(char c) { uart_putc(UART0_BASE, c); }
 
-extern "C" char kgetc() { return '\0'; }
+char kgetc() { return '\0'; }
 
-extern "C" int _read(int fd, const void *buf, int count) {
+int _read(int fd, const void *buf, int count) {
     int written = 0;
     (void)fd;
 
-    unsigned char *charbuf =
-        const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(buf));
+    unsigned char *charbuf = (unsigned char *)buf;
 
     for (; count > 0; --count) {
         written++;
@@ -46,12 +45,11 @@ extern "C" int _read(int fd, const void *buf, int count) {
     return written;
 }
 
-extern "C" int _write(int fd, const void *buf, int count) {
+int _write(int fd, const void *buf, int count) {
     int written = 0;
     (void)fd;
 
-    unsigned char *charbuf =
-        const_cast<unsigned char *>(reinterpret_cast<const unsigned char *>(buf));
+    unsigned char *charbuf = (unsigned char *)buf;
 
     for (; count > 0; --count) {
         kputc(*charbuf);

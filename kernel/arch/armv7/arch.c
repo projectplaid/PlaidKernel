@@ -20,11 +20,11 @@
 #include "armv7/interrupt.h"
 #include "kernel/arch.h"
 
-extern "C" void CP15VectorBaseAddrSet(unsigned int addr);
-extern "C" void _Reset();
-extern "C" void SVC_Handler();
-extern "C" void IRQHandler();
-extern "C" void FIQHandler();
+extern void CP15VectorBaseAddrSet(unsigned int addr);
+extern void _Reset();
+extern void SVC_Handler();
+extern void IRQHandler();
+extern void FIQHandler();
 
 void UndefInstHandler() {
     for (;;) {

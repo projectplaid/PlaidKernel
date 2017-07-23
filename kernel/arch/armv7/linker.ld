@@ -15,7 +15,7 @@
 
 MEMORY
 {
-    DDR0 :     o = 0x00000000,  l = 0x40000000  /* 1GB external DDR Bank 0 */
+    DDR0 :     o = 0x00000000,  l =  0x8000000 /* 128MB */ /* 0x40000000 1GB external DDR Bank 0 */
 }
 
 HEAPSIZE = 0x4000;

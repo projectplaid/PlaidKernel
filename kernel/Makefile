@@ -22,23 +22,17 @@ LDFLAGS:=$(LDFLAGS) -nostdlib -Wl,--gc-sections -ggdb -static-libgcc -static-lib
 LIBS:=$(LIBS) -lstdc++ -lc -lnosys -lgcc 
  
 ARCHDIR=arch/$(HOSTARCH)
-BOARDDIR=board/$(BOARD)
 
 include $(ARCHDIR)/make.config
-include $(BOARDDIR)/make.config 
 
-$(foreach driver,$(BOARD_DRIVERS),$(eval include drivers/$(driver)/make.config))
-
-CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS) $(BOARD_CFLAGS) $(DRIVER_CFLAGS)
-CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS) $(BOARD_CPPFLAGS) $(DRIVER_CPPFLAGS)
-CXXFLAGS:=$(CXXFLAGS) $(KERNEL_ARCH_CXXFLAGS) $(BOARD_CXXFLAGS) $(DRIVER_CXXFLAGS)
-LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS) $(BOARD_LDFLAGS) $(DRIVER_LDFLAGS)
-LIBS:=$(KERNEL_ARCH_LIBS) $(BOARD_LIBS) $(DRIVER_LIBS) $(LIBS)
+CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
+CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
+CXXFLAGS:=$(CXXFLAGS) $(KERNEL_ARCH_CXXFLAGS)
+LDFLAGS:=$(LDFLAGS) $(KERNEL_ARCH_LDFLAGS)
+LIBS:=$(KERNEL_ARCH_LIBS) $(LIBS)
  
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
-$(BOARD_OBJS) \
-$(DRIVER_OBJS) \
 kernel.o \
  
 OBJS=\
@@ -62,8 +56,8 @@ $(LIBS) \
  
 all: plaid.kernel
  
-plaid.kernel: $(OBJS) $(BOARDDIR)/linker.ld
-	$(CC) -T $(BOARDDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
+plaid.kernel: $(OBJS) $(ARCHDIR)/linker.ld
+	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(LINK_LIST)
 #	grub-file --is-x86-multiboot plaid.kernel
  
 $(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
@@ -92,5 +86,8 @@ install-headers:
 install-kernel: plaid.kernel
 	mkdir -p $(DESTDIR)$(BOOTDIR)
 	cp plaid.kernel $(DESTDIR)$(BOOTDIR)
+
+qemu: plaid.kernel
+	qemu-system-arm -M realview-pbx-a9 -cpu cortex-a9 -m 256 -kernel plaid.kernel
  
 -include $(OBJS:.o=.d)

@@ -1,5 +1,5 @@
 #include "armv7/regs.h"
-#include "board/realview-pbx-a9/soc.h"
+#include "realview-pbx-a9/soc.h"
 
 .text
 .arm

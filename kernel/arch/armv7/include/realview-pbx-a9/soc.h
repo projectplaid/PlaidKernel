@@ -44,6 +44,9 @@
 #define CLCD_BASE (0x10020000)
 #define DMA_BASE (0x10030000)
 #define SMC_BASE (0x10080000)
+
+#define PERIPHERAL_BASE (0x1f000000)
+
 #define NOR_BASE (0x40000000)
 #define DOC_BASE (0x44000000)
 #define SRAM_BASE (0x48000000)
@@ -55,5 +58,8 @@
 #define UART1_BASE (0x1000A000)
 #define UART2_BASE (0x1000B000)
 #define UART3_BASE (0x1000C000)
+
+#define REALVIEWPBA_GICOFF	0x0100	/* general interrupt controller */
+#define REALVIEWPBA_GDIOFF	0x1000  /* GIC distributor */
 
 #endif // __BOARD_SOC_H

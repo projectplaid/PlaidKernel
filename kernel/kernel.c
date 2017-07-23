@@ -23,11 +23,11 @@
 #include "kernel/board.h"
 #include "kernel/debug.h"
 
-extern "C" void __libc_init_array();
+extern void __libc_init_array();
 
-extern "C" void _init() {}
+void _init() {}
 
-extern "C" void kernel_main() {
+void kernel_main() {
     arch_init();
 
     board_init();
@@ -42,12 +42,11 @@ extern "C" void kernel_main() {
         printf("no memory!\r\n");
     } else {
         strcpy(str, "malloc");
-        printf("dynamic alloc str = %s, Address = %02x\r\n", str,
-               reinterpret_cast<unsigned int>(str));
+        printf("dynamic alloc str = %s, Address = %02x\r\n", str, str);
     }
 
     const char *p = "world";
-    printf("static alloc str = %s, Address = %02x\r\n", p, reinterpret_cast<unsigned int>(p));
+    printf("static alloc str = %s, Address = %02x\r\n", p, p);
 
     for (;;) {
     }
